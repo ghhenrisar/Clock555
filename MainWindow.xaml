@@ -1,14 +1,23 @@
 ﻿<Window x:Class="CustomGadgetApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Custom Gadget App" Height="450" Width="800"
-        WindowStyle="None" AllowsTransparency="True"
-        Background="Transparent" Topmost="True">
+        Title="MainWindow" Height="450" Width="800"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Name="ClockText" FontSize="24" Foreground="White" HorizontalAlignment="Center"/>
-            <TextBlock Name="WeatherText" FontSize="24" Foreground="White" HorizontalAlignment="Center" Margin="0,20,0,0"/>
-            <Calendar Name="CalendarControl" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Column="0" Text="Clock" />
+        <GridSplitter Grid.Column="1" Width="5" Background="Gray" />
+        <StackPanel Grid.Column="2">
+            <TextBlock Text="{Binding Temperature}" />
+            <TextBlock Text="{Binding Description}" />
         </StackPanel>
     </Grid>
 </Window>

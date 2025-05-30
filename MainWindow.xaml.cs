@@ -1,24 +1,24 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Threading;
+﻿using System.Windows;
+using System.Windows.Input;
 
 namespace CustomGadgetApp
 {
     public partial class MainWindow : Window
     {
+        private WeatherViewModel _weatherViewModel;
+
         public MainWindow()
         {
             InitializeComponent();
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            _weatherViewModel = new WeatherViewModel();
+            DataContext = _weatherViewModel;
+            _weatherViewModel.GetWeatherAsync("London");
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ClockText.Text = DateTime.Now.ToString("HH:mm:ss");
-            WeatherText.Text = "Weather: Sunny, 25°C"; // Placeholder
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
         }
     }
 }
