@@ -1,51 +1,18 @@
 ﻿<Window x:Class="CustomGadgetApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Custom Gadget" Height="450" Width="800"
-        WindowStyle="None"
-        AllowsTransparency="True"
-        Background="Transparent"
-        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+        Title="Custom Gadget" Height="200" Width="400"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent">
+    <Grid Background="#AAFFFFFF">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
-    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Background="#CCFFFFFF" Padding="10">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
+        <TextBlock x:Name="ClockTextBlock" Text="08:32" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Center" />
 
-            <!-- Clock Placeholder -->
-
-            <TextBlock Text="{Binding CurrentTime}" 
-                    FontSize="24" 
-                    FontWeight="Bold" 
-                    Foreground="Black" 
-                    HorizontalAlignment="Center" 
-                    VerticalAlignment="Top" 
-                    Margin="0,10,0,0"/>
-  
-
-
-            <!-- Splitter -->
-            <GridSplitter Grid.Column="1"
-                          Width="5"
-                          Background="Gray"
-                          HorizontalAlignment="Stretch" />
-
-            <!-- Weather Info -->
-            <StackPanel Grid.Column="2"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Left"
-                        Margin="10">
-                <TextBlock Text="{Binding Temperature, FallbackValue='20 °C'}"
-                           FontSize="18"
-                           Foreground="Black"
-                           Margin="0,0,0,5" />
-                <TextBlock Text="{Binding Description, FallbackValue='Sunny'}"
-                           FontSize="14"
-                           Foreground="Gray" />
-            </StackPanel>
-        </Grid>
-    </Border>
+        <Button Content="⚙" Width="30" Height="30" Grid.Column="1" Margin="10"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Click="SettingsButton_Click" ToolTip="Settings"/>
+    </Grid>
 </Window>
