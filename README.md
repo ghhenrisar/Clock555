@@ -1,40 +1,37 @@
-# CustomGadgetApp
-✅ Project Summary: Customizable WPF Desktop Gadget
+Copilot
+Absolutely! Here's a summary of your project and progress so far, so you can easily continue in a new chat:
 
-📌 Project Goal
-Create a fully customizable Windows desktop gadget using WPF by using Visual Studio Code that includes:
-🕒 A live clock
-🌤️ A placeholder weather forecast
-📅 A calendar
-🎨 Customization options (size, position, color)
+✅ Project: CustomGadgetApp
+A customizable WPF desktop gadget built in Visual Studio Code, featuring:
 
+🕒 Live clock (UK time)
+🌤️ Weather forecast (via Open-Meteo UKMO model)
+📅 Calendar (planned)
+🎨 Customization options (in progress)
+📌 Current Status
+✅ Core Features Implemented
+WPF UI with transparent, draggable window
+Weather integration using Open-Meteo’s UKMO Seamless model (no API key required)
+Live clock showing current UK time, updated every second
+GitHub repo connected: CustomGadgetApp
+✅ Code Improvements
+Implemented INotifyPropertyChanged for live UI updates
+Used fallback values and styling for better visibility
+Fixed layout and rendering issues
+✅ Git & Sync
+Git is initialized and connected to GitHub
+You’ve learned how to:
+Stage, commit, and push changes
+Check sync status with git status and git fetch
+🔜 Next Steps (Optional)
+You can continue with any of the following:
 
+🎨 Add UI for customization (color, size, position)
+📅 Add a calendar or date display
+💾 Save and load user preferences
+📦 Package the app for distribution
+When you're ready, just start a new chat and say something like:
 
+"Let's continue CustomGadgetApp — I want to add customization options."
 
-
-Status is as follows:
-
-🛠️ Current Progress
-✅ Files Created and Added:
-.vscode/launch.json – Debug configuration for VS Code
-.vscode/tasks.json – Build task for VS Code
-MainWindow.xaml – UI layout with resizable and movable elements
-MainWindow.xaml.cs – Logic for dragging and weather binding
-WeatherModel.cs – Model for OpenWeatherMap API response
-WeatherViewModel.cs – ViewModel to fetch and bind weather data
-✅ Local Setup:
-All 6 files have been manually created in VS Code
-Git is installed and working
-GitHub repo: https://github.com/ghhenrisar/CustomGadgetApp
-🔄 Next Steps
-Stage, commit, and push the 6 files to GitHub:
-
-Replace "YOUR_API_KEY" in WeatherViewModel.cs with your actual OpenWeatherMap API key.
-Test the app in VS Code using the .NET Core Launch (WPF) debug config.
-Let me know in the new chat if you'd like help with:
-
-Live clock or calendar integration
-Saving user preferences (e.g., color, position)
-Packaging the app for distribution
-Looking forward to continuing with you!
-
+I'll pick up right where we left off. Looking forward to continuing with you!
