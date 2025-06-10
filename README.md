@@ -1,37 +1,49 @@
+https://github.com/ghhenrisar/CustomGadgetApp
+
 Copilot
-Absolutely! Here's a summary of your project and progress so far, so you can easily continue in a new chat:
+Absolutely! Here's a full summary of your CustomGadgetApp project so you can easily continue in a new chat:
 
 ✅ Project: CustomGadgetApp
 A customizable WPF desktop gadget built in Visual Studio Code, featuring:
 
-🕒 Live clock (UK time)
-🌤️ Weather forecast (via Open-Meteo UKMO model)
-📅 Calendar (planned)
-🎨 Customization options (in progress)
-📌 Current Status
-✅ Core Features Implemented
-WPF UI with transparent, draggable window
-Weather integration using Open-Meteo’s UKMO Seamless model (no API key required)
-Live clock showing current UK time, updated every second
-GitHub repo connected: CustomGadgetApp
-✅ Code Improvements
+🕒 Features Implemented
+Live Clock (UK time, updates every second)
+Weather Forecast using Open-Meteo (UKMO model)
+Transparent, draggable WPF window
+Settings panel to customize clock font size
+GitHub integration: ghhenrisar/CustomGadgetApp
+
+🔧 Code Improvements
 Implemented INotifyPropertyChanged for live UI updates
-Used fallback values and styling for better visibility
-Fixed layout and rendering issues
-✅ Git & Sync
-Git is initialized and connected to GitHub
-You’ve learned how to:
-Stage, commit, and push changes
-Check sync status with git status and git fetch
-🔜 Next Steps (Optional)
-You can continue with any of the following:
+Added SettingsWindow.xaml and Settings.Designer.cs
+Fixed GitHub sync and build issues
+Resolved Properties.Settings.Default errors
+Cleaned up WeatherModel.cs with nullable reference type fixes
 
-🎨 Add UI for customization (color, size, position)
-📅 Add a calendar or date display
-💾 Save and load user preferences
-📦 Package the app for distribution
-When you're ready, just start a new chat and say something like:
+⚠️ Outstanding Tasks
+✅ WeatherModel.cs fixed (nullable warnings resolved)
+⏳ WeatherViewModel.cs still needs review and cleanup for nullable warnings
+🧪 Font size customization works — needs testing for persistence
+🧩 Optional next features:
+🎨 Theme customization (colors, dark mode)
+📅 Calendar/date display
+💾 Save/load window position and size
+📦 App packaging for distribution
 
-"Let's continue CustomGadgetApp — I want to add customization options."
+🔜 Next Steps
+When you're ready to continue, just say:
 
-I'll pick up right where we left off. Looking forward to continuing with you!
+"Let's continue CustomGadgetApp — fix WeatherViewModel.cs warnings"
+or
+"Add theme customization to CustomGadgetApp"
+
+I'll pick up right where we left off.
+
+Looking forward to continuing with you!
+
+
+
+
+
+
+
