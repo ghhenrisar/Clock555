@@ -1,18 +1,53 @@
-﻿<Window x:Class="CustomGadgetApp.MainWindow"
+<Window x:Class="CustomGadgetApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Custom Gadget" Height="200" Width="400"
-        WindowStyle="None" AllowsTransparency="True" Background="Transparent">
-    <Grid Background="#AAFFFFFF">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+        Title="Custom Gadget" Height="250" Width="320"
+        Background="Transparent" AllowsTransparency="True" WindowStyle="None"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    <Border CornerRadius="15" BorderBrush="Gray" BorderThickness="1">
+        <Grid>
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#222" Offset="0.0"/>
+                    <GradientStop Color="#333" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Grid.Background>
 
-        <TextBlock x:Name="ClockTextBlock" Text="08:32" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <!-- Top bar with buttons -->
+            <DockPanel LastChildFill="False" HorizontalAlignment="Right" Margin="0,5,5,0" VerticalAlignment="Top">
+                <Button Content="—" Width="25" Height="25" Click="Minimize_Click" Margin="0,0,5,0"/>
+                <Button Content="X" Width="25" Height="25" Click="Close_Click"/>
+            </DockPanel>
 
-        <Button Content="⚙" Width="30" Height="30" Grid.Column="1" Margin="10"
-                HorizontalAlignment="Right" VerticalAlignment="Top"
-                Click="SettingsButton_Click" ToolTip="Settings"/>
-    </Grid>
+            <!-- Main content -->
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                <TextBlock x:Name="ClockText"
+                           Text="{Binding CurrentTime}"
+                           FontSize="24"
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           Margin="0,5"/>
+                <TextBlock Text="{Binding Temperature}"
+                           FontSize="20"
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           Margin="0,5"/>
+                <TextBlock Text="{Binding Description}"
+                           FontSize="14"
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           Margin="0,5"/>
+                <Button Content="Refresh Weather"
+                        Click="RefreshWeather_Click"
+                        Margin="0,10"
+                        Padding="5,2"
+                        HorizontalAlignment="Center"/>
+                <Button Content="⚙ Settings"
+                        Click="OpenSettings_Click"
+                        Margin="0,5"
+                        Padding="5,2"
+                        HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>

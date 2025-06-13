@@ -4,32 +4,34 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using System.Timers;
 
 namespace CustomGadgetApp
 {
     public class WeatherViewModel : INotifyPropertyChanged
     {
-        private string _temperature;
-        private string _description;
-        private string _currentTime;
-        private System.Timers.Timer _clockTimer;
+        private string _temperature = string.Empty;
+        private string _description = string.Empty;
+        private string _currentTime = string.Empty;
+        private System.Timers.Timer? _clockTimer;
+
 
         public string Temperature
         {
             get => _temperature;
-            set { _temperature = value; OnPropertyChanged(); }
+            set => SetProperty(ref _temperature, value);
         }
 
         public string Description
         {
             get => _description;
-            set { _description = value; OnPropertyChanged(); }
+            set => SetProperty(ref _description, value);
         }
 
         public string CurrentTime
         {
             get => _currentTime;
-            set { _currentTime = value; OnPropertyChanged(); }
+            set => SetProperty(ref _currentTime, value);
         }
 
         public WeatherViewModel()
@@ -49,33 +51,53 @@ namespace CustomGadgetApp
 
         public async Task GetWeatherAsync(string city)
         {
-            var latitude = "51.5085";
-            var longitude = "-0.1257";
-            var url = $"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&hourly=temperature_2m&models=ukmo_seamless&timezone=Europe%2FLondon";
+            const string latitude = "51.5085";
+            const string longitude = "-0.1257";
+            string url = $"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&hourly=temperature_2m&models=ukmo_seamless&timezone=Europe%2FLondon";
 
-            using var client = new HttpClient();
-            var response = await client.GetStringAsync(url);
-            var json = JObject.Parse(response);
-
-            var times = json["hourly"]["time"];
-            var temps = json["hourly"]["temperature_2m"];
-
-            var now = DateTime.UtcNow.AddHours(1).ToString("yyyy-MM-ddTHH:00");
-            for (int i = 0; i < times.Count(); i++)
+            try
             {
-                if (times[i]?.ToString() == now)
+                using var client = new HttpClient();
+                var response = await client.GetStringAsync(url);
+                var json = JObject.Parse(response);
+
+                var times = json["hourly"]?["time"];
+                var temps = json["hourly"]?["temperature_2m"];
+
+                if (times != null && temps != null)
                 {
-                    Temperature = $"{temps[i]} °C";
-                    Description = "UKMO Forecast";
-                    break;
+                    string now = DateTime.UtcNow.AddHours(1).ToString("yyyy-MM-ddTHH:00");
+                    for (int i = 0; i < times.Count(); i++)
+                    {
+                        if (times[i]?.ToString() == now)
+                        {
+                            Temperature = $"{temps[i]} °C";
+                            Description = "UKMO Forecast";
+                            break;
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Temperature = "N/A";
+                Description = $"Error: {ex.Message}";
             }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
         }
     }
 }
