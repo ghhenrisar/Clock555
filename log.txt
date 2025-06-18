@@ -1,0 +1,17 @@
+18/6 Wed 9:19:57 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:44:47 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:46:47 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:48:12 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:49:08 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:50:28 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:51:50 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:52:12 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:52:34 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:57:24 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 9:57:35 pm: Window position reset to default as loaded position was off-screen or invalid.
+18/6 Wed 10:02:03 pm: Window position defaulted or corrected.
+18/6 Wed 10:08:32 pm: Window position defaulted or corrected.
+18/6 Wed 10:21:23 pm: Window position defaulted or corrected.
+18/6 Wed 10:21:42 pm: Window position defaulted or corrected.
+18/6 Wed 10:27:57 pm: Window position defaulted or corrected in normal mode.
+18/6 Wed 10:28:18 pm: Window position defaulted or corrected in normal mode.

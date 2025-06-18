@@ -1,15 +1,27 @@
 <Window x:Class="CustomGadgetApp.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Settings" Height="150" Width="300"
-        WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
-    <Grid Margin="10">
-        <StackPanel>
-            <TextBlock Text="Clock Font Size" Margin="0,0,0,5"/>
-            <Slider x:Name="FontSizeSlider" Minimum="10" Maximum="72" TickFrequency="2" IsSnapToTickEnabled="True"
-                    ValueChanged="FontSizeSlider_ValueChanged"/>
-            <Button Content="Save" Margin="0,10,0,0" Click="SaveButton_Click" HorizontalAlignment="Right" Width="80"/>
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Settings" Height="200" Width="400"
+        WindowStyle="ToolWindow" ResizeMode="NoResize"
+        Background="#303030" Foreground="White">
+    <Grid>
+        <StackPanel Margin="20">
+            <TextBlock Text="Clock Font Size" FontSize="16" Margin="0,0,0,10"/>
+            <Slider x:Name="FontSizeSlider" 
+                    Minimum="10" 
+                    Maximum="800"  Value="{Binding ElementName=RootWindow, Path=ClockFontSize, Mode=TwoWay}"
+                    ValueChanged="FontSizeSlider_ValueChanged"
+                    IsSnapToTickEnabled="True" TickPlacement="BottomRight" TickFrequency="10"/>
+
+            <Button Content="Save" 
+                    Click="SaveButton_Click" 
+                    Margin="0,20,0,0" 
+                    Padding="10,5" 
+                    HorizontalAlignment="Center"
+                    Background="#505050" BorderBrush="#707070" Foreground="White"/>
         </StackPanel>
     </Grid>
 </Window>
