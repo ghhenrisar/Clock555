@@ -10,4 +10,3 @@ namespace CustomGadgetApp;
 public partial class App : Application
 {
 }
-
