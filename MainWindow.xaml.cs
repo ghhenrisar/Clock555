@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading; // Using DispatcherTimer for UI thread updates
 
-namespace CustomGadgetApp
+namespace Clock555
 {
     public partial class MainWindow : Window
     {

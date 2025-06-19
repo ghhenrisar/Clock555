@@ -1,6 +1,6 @@
-https://github.com/ghhenrisar/CustomGadgetApp
+https://github.com/ghhenrisar/Clock555
 
-# CustomGadgetApp
+# Clock555
 
 A customizable WPF desktop gadget built in Visual Studio Code, featuring a live clock and flexible window management.
 

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CustomGadgetApp.Properties {
+namespace Clock555.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

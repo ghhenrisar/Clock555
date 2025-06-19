@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace CustomGadgetApp
+namespace Clock555
 {
     public partial class SettingsWindow : Window
     {

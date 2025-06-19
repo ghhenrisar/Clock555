@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace CustomGadgetApp;
+namespace Clock555;
 
 /// <summary>
 /// Interaction logic for App.xaml
