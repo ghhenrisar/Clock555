@@ -7,6 +7,8 @@ obj/
 *.suo
 *.userosscache
 *.sln.docstates
+log.txt
+settings.ini
 
 # VS Code settings (optional)
 .vscode/
