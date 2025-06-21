@@ -1,53 +1,68 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading; // Using DispatcherTimer for UI thread updates
+using System.Windows.Interop;
+using System.Windows.Threading;
 
 namespace Clock555
 {
     public partial class MainWindow : Window
     {
-        private DispatcherTimer? _timer;
-        // Removed: private bool _isLoaded = false;
-        private double _fontSize = 800; // Default Font Size set to 800
+        // --- P/Invoke declarations for the Win32 API ---
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
-        // Fields to store normal window state for full screen toggle
-        private bool _isFullScreen = true; // Default to true for full screen by default
-        private double _normalLeft = 0, _normalTop = 0, _normalWidth = 600, _normalHeight = 800; // Sensible defaults for normal state
+        private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOMOVE = 0x0002;
+        
+        // --- End of P/Invoke declarations ---
 
+        private DispatcherTimer? _clockTimer;
+        private DispatcherTimer? _topmostTimer;
+
+        private double _normalFontSize = 100;
+        private double _fullScreenFontSize = 800;
+        private bool _isFullScreen = true;
+        private double _normalLeft = 100, _normalTop = 100, _normalWidth = 600, _normalHeight = 400;
 
         public MainWindow()
         {
             InitializeComponent();
-            // Removed: _isLoaded = true; // Set _isLoaded to true immediately after InitializeComponent()
-
-            LoadSettings(); // Loads values into _fontSize, _isFullScreen, _normal...
-            ApplyWindowAndFontSettings(); // Applies these settings to the actual window/controls
+            LoadSettings();
+            ApplyWindowAndFontSettings();
             StartClock();
+            StartTopmostTimer();
         }
 
         private void StartClock()
         {
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromSeconds(1);
-            _timer.Tick += (s, e) =>
+            _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _clockTimer.Tick += (s, e) => {
+                if (ClockText != null) ClockText.Text = DateTime.Now.ToString("HH:mm");
+            };
+            _clockTimer.Start();
+        }
+        
+        private void StartTopmostTimer()
+        {
+            _topmostTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
+            _topmostTimer.Tick += (s, e) =>
             {
-                if (ClockText != null) // Ensure ClockText is not null before updating
+                if (!_isFullScreen)
                 {
-                    ClockText.Text = DateTime.Now.ToString("HH:mm");
+                    ForceTopmost();
                 }
             };
-            _timer.Start();
+            _topmostTimer.Start();
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Only allow dragging if the left mouse button is pressed and not in full screen mode
-            if (e.LeftButton == MouseButtonState.Pressed && !_isFullScreen)
-            {
-                DragMove();
-            }
+            if (e.LeftButton == MouseButtonState.Pressed && !_isFullScreen) DragMove();
         }
 
         private void Minimize_Click(object sender, RoutedEventArgs e)
@@ -57,74 +72,77 @@ namespace Clock555
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            SaveSettings(); // Save settings before closing
+            if (!_isFullScreen)
+            {
+                _normalLeft = Left;
+                _normalTop = Top;
+                _normalWidth = Width;
+                _normalHeight = Height;
+            }
+            SaveSettings();
             Close();
         }
 
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
-            var settingsWindow = new SettingsWindow(this, _fontSize);
-            settingsWindow.Owner = this; // Set the main window as the owner
+            if (!_isFullScreen)
+            {
+                _normalLeft = Left;
+                _normalTop = Top;
+                _normalWidth = Width;
+                _normalHeight = Height;
+            }
+            double currentFontSize = _isFullScreen ? _fullScreenFontSize : _normalFontSize;
+            var settingsWindow = new SettingsWindow(this, currentFontSize) { Owner = this };
             settingsWindow.ShowDialog();
         }
 
-        // NEW: Method to apply all window and font settings
         private void ApplyWindowAndFontSettings()
         {
             if (_isFullScreen)
             {
-                this.SizeToContent = SizeToContent.Manual; // Disable dynamic sizing
+                this.Topmost = false;
+                this.SizeToContent = SizeToContent.Manual;
                 this.Left = SystemParameters.VirtualScreenLeft;
                 this.Top = SystemParameters.VirtualScreenTop;
                 this.Width = SystemParameters.VirtualScreenWidth;
                 this.Height = SystemParameters.VirtualScreenHeight;
+                if (ClockText != null) ClockText.FontSize = _fullScreenFontSize;
             }
             else
             {
-                this.SizeToContent = SizeToContent.WidthAndHeight; // Enable dynamic sizing
-
-                // Set to normal saved/default position and size
+                this.SizeToContent = SizeToContent.WidthAndHeight;
                 this.Left = _normalLeft;
                 this.Top = _normalTop;
-                // Note: When SizeToContent is active, explicit Width/Height values
-                // on the window will be overridden by content's actual size.
-                // However, setting _normalWidth/_normalHeight here is still useful
-                // for saving the last known normal size for the next full screen toggle.
-
-                // Position validation/correction for normal mode
-                if (Left < SystemParameters.VirtualScreenLeft || Left > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Width ||
-                    Top < SystemParameters.VirtualScreenTop || Top > SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Height)
-                {
-                    Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
-                    Top = (SystemParameters.PrimaryScreenHeight - Height) / 2;
-                    // Update _normalLeft/_normalTop if reset
-                    _normalLeft = Left;
-                    _normalTop = Top;
-                    File.AppendAllText("log.txt", $"{DateTime.Now}: Window position defaulted or corrected in normal mode.{Environment.NewLine}");
-                }
-            }
-
-            // Always apply font size after window size is set (ClockText needs to be valid)
-            if (ClockText != null)
-            {
-                ClockText.FontSize = _fontSize;
+                if (ClockText != null) ClockText.FontSize = _normalFontSize;
             }
         }
+        
+        private void ForceTopmost()
+        {
+            IntPtr hWnd = new WindowInteropHelper(this).Handle;
+            SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+        }
 
-
-        // NEW: Full screen toggle method - now calls ApplyWindowAndFontSettings
         private void ToggleFullScreen_Click(object sender, RoutedEventArgs e)
         {
-            // Simply toggle the flag and re-apply settings
+            if (!_isFullScreen)
+            {
+                _normalLeft = Left;
+                _normalTop = Top;
+                _normalWidth = Width;
+                _normalHeight = Height;
+                SaveSettings();
+            }
             _isFullScreen = !_isFullScreen;
             ApplyWindowAndFontSettings();
         }
 
-
         public void UpdateClockFontSize(double newSize)
         {
-            _fontSize = newSize;
-            ApplyWindowAndFontSettings(); // Re-apply settings to update font size
+            if (_isFullScreen) _fullScreenFontSize = newSize;
+            else _normalFontSize = newSize;
+            ApplyWindowAndFontSettings();
         }
 
         public void SaveSettings()
@@ -133,34 +151,31 @@ namespace Clock555
             {
                 using (StreamWriter writer = new StreamWriter("settings.ini"))
                 {
-                    writer.WriteLine($"FontSize={_fontSize}");
-                    
-                    // Save normal window position and size (if not in full screen)
-                    // If in full screen, save the last known normal position and size
-                    writer.WriteLine($"Left={(_isFullScreen ? _normalLeft : Left)}");
-                    writer.WriteLine($"Top={(_isFullScreen ? _normalTop : Top)}");
-                    writer.WriteLine($"Width={(_isFullScreen ? _normalWidth : Width)}");
-                    writer.WriteLine($"Height={(_isFullScreen ? _normalHeight : Height)}");
-                    writer.WriteLine($"IsFullScreen={_isFullScreen}"); // Saving full screen state
+                    writer.WriteLine($"NormalFontSize={_normalFontSize}");
+                    writer.WriteLine($"FullScreenFontSize={_fullScreenFontSize}");
+                    writer.WriteLine($"NormalLeft={_normalLeft}");
+                    writer.WriteLine($"NormalTop={_normalTop}");
+                    writer.WriteLine($"NormalWidth={_normalWidth}");
+                    writer.WriteLine($"NormalHeight={_normalHeight}");
+                    writer.WriteLine($"IsFullScreen={_isFullScreen}");
                 }
             }
             catch (Exception ex)
             {
-                // Log the error if settings cannot be saved
                 File.AppendAllText("log.txt", $"{DateTime.Now}: Error saving settings — {ex.Message}{Environment.NewLine}");
             }
         }
 
-        // LoadSettings - now only reads values into private fields
         public void LoadSettings()
         {
-            // Reset defaults before loading from file, so if file is incomplete, defaults are used.
-            _fontSize = 800; // Initial default font size
-            _isFullScreen = true; // Initial default full screen state (as per user request for default)
-            _normalLeft = 0; // Default normal position. Will be updated by ApplyWindowAndFontSettings if reset.
-            _normalTop = 0;
-            // _normalWidth and _normalHeight have defaults set at declaration (600, 800)
-
+            // Set initial defaults
+            _normalFontSize = 100;
+            _fullScreenFontSize = 800;
+            _isFullScreen = true;
+            _normalLeft = 100;
+            _normalTop = 100;
+            _normalWidth = 600;
+            _normalHeight = 400;
             try
             {
                 if (File.Exists("settings.ini"))
@@ -168,76 +183,47 @@ namespace Clock555
                     foreach (var line in File.ReadAllLines("settings.ini"))
                     {
                         var parts = line.Split('=');
-                        if (parts.Length == 2)
+                        if (parts.Length != 2) continue;
+                        string key = parts[0].Trim();
+                        string value = parts[1].Trim();
+                        switch (key)
                         {
-                            string key = parts[0].Trim();
-                            string value = parts[1].Trim();
-
-                            switch (key)
-                            {
-                                case "FontSize":
-                                    if (double.TryParse(value, out double size))
-                                    {
-                                        _fontSize = size;
-                                    }
-                                    break;
-                                case "Left":
-                                    if (double.TryParse(value, out double left))
-                                    {
-                                        _normalLeft = left;
-                                    }
-                                    break;
-                                case "Top":
-                                    if (double.TryParse(value, out double top))
-                                    {
-                                        _normalTop = top;
-                                    }
-                                    break;
-                                case "Width": // Load Width
-                                    if (double.TryParse(value, out double width))
-                                    {
-                                        _normalWidth = width;
-                                    }
-                                    break;
-                                case "Height": // Load Height
-                                    if (double.TryParse(value, out double height))
-                                    {
-                                        _normalHeight = height;
-                                    }
-                                    break;
-                                case "IsFullScreen": // Load full screen state
-                                    if (bool.TryParse(value, out bool fs))
-                                    {
-                                        _isFullScreen = fs;
-                                    }
-                                    break;
-                                // Backward compatibility for old settings.ini
-                                case "WindowLeft":
-                                    if (double.TryParse(value, out double windowLeft))
-                                    {
-                                        _normalLeft = windowLeft;
-                                    }
-                                    break;
-                                case "WindowTop":
-                                    if (double.TryParse(value, out double windowTop))
-                                    {
-                                        _normalTop = windowTop;
-                                    }
-                                    break;
-                            }
+                            case "FontSize": if (double.TryParse(value, out double size)) _normalFontSize = size; break;
+                            case "NormalFontSize": if (double.TryParse(value, out double nfs)) _normalFontSize = nfs; break;
+                            case "FullScreenFontSize": if (double.TryParse(value, out double ffs)) _fullScreenFontSize = ffs; break;
+                            case "NormalLeft": if (double.TryParse(value, out double left)) _normalLeft = left; break;
+                            case "NormalTop": if (double.TryParse(value, out double top)) _normalTop = top; break;
+                            case "NormalWidth": if (double.TryParse(value, out double width)) _normalWidth = width; break;
+                            case "NormalHeight": if (double.TryParse(value, out double height)) _normalHeight = height; break;
+                            case "IsFullScreen": if (bool.TryParse(value, out bool fs)) _isFullScreen = fs; break;
                         }
                     }
+                }
+
+                // A NEW, SMARTER VALIDATION BLOCK
+                // This checks if the loaded position is outside the bounds of all connected screens.
+                bool isPositionInvalid = (_normalLeft > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - 50) ||
+                                         (_normalTop > SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - 50) ||
+                                         (_normalLeft < SystemParameters.VirtualScreenLeft) ||
+                                         (_normalTop < SystemParameters.VirtualScreenTop);
+
+                if (isPositionInvalid)
+                {
+                    // If the position is invalid, reset it to the center of the primary screen.
+                    _normalLeft = (SystemParameters.PrimaryScreenWidth - _normalWidth) / 2;
+                    _normalTop = (SystemParameters.PrimaryScreenHeight - _normalHeight) / 2;
                 }
             }
             catch (Exception ex)
             {
-                File.AppendAllText("log.txt", $"{DateTime.Now}: Error loading settings — {ex.Message}{Environment.NewLine}");
+                File.AppendAllText("log.txt", $"{DateTime.Now}: Error saving settings — {ex.Message}{Environment.NewLine}");
             }
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            _timer?.Stop(); // Stop the timer when the window closes
+            _clockTimer?.Stop();
+            _topmostTimer?.Stop();
             base.OnClosed(e);
         }
     }

@@ -5,48 +5,58 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Clock555"
         mc:Ignorable="d"
-        Title="Clock555" 
-        SizeToContent="WidthAndHeight"   MinWidth="100" MinHeight="100"  Background="Transparent" AllowsTransparency="True" WindowStyle="None"
-        MouseLeftButtonDown="Window_MouseLeftButtonDown"
-        Topmost="True">
+        Title="Clock555"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
-    <Border CornerRadius="15" BorderBrush="Gray" BorderThickness="1">
+    <Window.Resources>
+        <Style TargetType="Button" x:Key="WindowControlButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#555"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="10" Background="#222">
         <Grid>
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#222" Offset="0.0"/>
-                    <GradientStop Color="#333" Offset="1.0"/>
-                </LinearGradientBrush>
-            </Grid.Background>
-
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>       <RowDefinition Height="Auto"/>       </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Background="#303030" Height="30" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+            <Border Grid.Row="0" Background="#333" CornerRadius="10,10,0,0" MouseLeftButtonDown="Window_MouseLeftButtonDown" Padding="1">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="-" Width="30" Height="30" Background="Transparent" Foreground="White" BorderBrush="Transparent" Click="Minimize_Click"/>
-                    <Button Content="⚙️" Width="30" Height="30" Background="Transparent" Foreground="White" BorderBrush="Transparent" Click="OpenSettings_Click"/>
-                    <Button Content="⛶" Width="30" Height="30" Background="Transparent" Foreground="White" BorderBrush="Transparent" Click="ToggleFullScreen_Click"/>
-                    <Button Content="X" Width="30" Height="30" Background="Transparent" Foreground="White" BorderBrush="Transparent" Click="Close_Click"/>
+                    <Button Content="-" Click="Minimize_Click" Style="{StaticResource WindowControlButton}"/>
+                    <Button Content="⚙" Click="OpenSettings_Click" Style="{StaticResource WindowControlButton}"/>
+                    <Button Content="⛶" Click="ToggleFullScreen_Click" Style="{StaticResource WindowControlButton}"/>
+                    <Button Content="X" Click="Close_Click" Style="{StaticResource WindowControlButton}"/>
                 </StackPanel>
             </Border>
 
-            <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock x:Name="ClockText"
-                           FontSize="24"
-                           Foreground="White"
-                           HorizontalAlignment="Center"
-                           Margin="0,5"/>
+            <TextBlock x:Name="ClockText"
+                       Grid.Row="1"
+                       Text="22:22"
+                       FontFamily="Segoe UI Light"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Padding="0,0,0,0" /> <Calendar x:Name="CalendarControl" Visibility="Collapsed" Grid.Row="1"/>
 
-                <Calendar x:Name="CalendarControl"
-                          Margin="0,20,0,0"
-                          Visibility="Collapsed"
-                          Background="#202020"
-                          BorderBrush="Transparent"
-                          Foreground="White"/>
-            </StackPanel>
         </Grid>
     </Border>
 </Window>
