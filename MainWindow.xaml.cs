@@ -111,7 +111,9 @@ namespace Clock555
             }
             else
             {
-                this.SizeToContent = SizeToContent.WidthAndHeight;
+                this.SizeToContent = SizeToContent.Manual;
+        this.Width = _normalWidth;
+        this.Height = _normalHeight;
                 this.Left = _normalLeft;
                 this.Top = _normalTop;
                 if (ClockText != null) ClockText.FontSize = _normalFontSize;
